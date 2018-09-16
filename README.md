@@ -4,3 +4,7 @@ jquery(document).ready(function(){
 });
 
 ```
+```html
+<h1>PHP sectiion</h1>
+
+ ```
