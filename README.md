@@ -11,7 +11,8 @@
   $months     = round($time_elapsed / 2600640 );
   $years      = round($time_elapsed / 31207680 );
   // Seconds
-  if($seconds <= 60){
+  if($seconds <= 60)
+  {
       echo "just now";
   }
   //Minutes
