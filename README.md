@@ -3,7 +3,7 @@
   $time_ago = strtotime($notify->created_at);
   $cur_time   = time();
   $time_elapsed   = $cur_time - $time_ago;
-   $seconds    = $time_elapsed ;
+  $seconds    = $time_elapsed ;
   $minutes    = round($time_elapsed / 60 );
   $hours      = round($time_elapsed / 3600);
   $days       = round($time_elapsed / 86400 );
@@ -15,51 +15,73 @@
       echo "just now";
   }
   //Minutes
-  else if($minutes <=60){
-      if($minutes==1){
+  else if($minutes <=60)
+  {
+      if($minutes==1)
+      {
           echo "one minute ago";
       }
-      else{
+      else
+      {
           echo "$minutes minutes ago";
       }
   }
   //Hours
-  else if($hours <=24){
-      if($hours==1){
+  else if($hours <=24)
+  {
+      if($hours==1)
+      {
           echo "an hour ago";
-      }else{
+      }
+      else
+      {
           echo "$hours hrs ago";
       }
   }
   //Days
-  else if($days <= 7){
-      if($days==1){
+  else if($days <= 7)
+  {
+      if($days==1)
+      {
           echo "yesterday";
-      }else{
+      }
+      else
+      {
           echo "$days days ago";
       }
   }
   //Weeks
-  else if($weeks <= 4.3){
-      if($weeks==1){
+  else if($weeks <= 4.3)
+  {
+      if($weeks==1)
+      {
           echo "a week ago";
-      }else{
+      }
+      else
+      {
           echo "$weeks weeks ago";
       }
   }
   //Months
-  else if($months <=12){
-      if($months==1){
+  else if($months <=12)
+  {
+      if($months==1)
+      {
           echo "a month ago";
-      }else{
+      }
+      else
+      {
           echo "$months months ago";
       }
   }
   //Years
   else{
-      if($years==1){
+      if($years==1)
+      {
           echo "one year ago";
-      }else{
+      }
+      else
+      {
           echo "$years years ago";
       }
   }
