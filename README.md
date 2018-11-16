@@ -1,6 +1,5 @@
 # PHP Date From Created 
 ```php
-@php
   $time_ago = strtotime($notify->created_at);
   $cur_time   = time();
   $time_elapsed   = $cur_time - $time_ago;
@@ -64,6 +63,4 @@
           echo "$years years ago";
       }
   }
-
-@endphp
 ```
