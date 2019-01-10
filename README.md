@@ -187,3 +187,14 @@ $product_images =  DB::table('product_images')
             return back();
         }
 ```
+### Read file from folder in laravl
+```php
+$files = File::files(public_path('uploads/download-images'));
+            if ($files !== false) 
+            {
+                $filecount = count($files);
+               foreach ($filecount as $file) {
+                    return response()->download($filetopath, $zipFileName, $headers);
+               }
+            }
+```
