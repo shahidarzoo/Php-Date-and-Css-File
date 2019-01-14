@@ -1,4 +1,4 @@
-# PHP Date From Created 
+# PHP/laravel Date and Zip Create and Download
 ```php
   $time_ago = strtotime($notify->created_at);
   $cur_time   = time();
