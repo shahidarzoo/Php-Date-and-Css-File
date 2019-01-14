@@ -128,6 +128,8 @@ $(document).ready(function ()
                 data: 'ids='+join_selected_values,
                 success: function (data) 
                 {
+                    //data.fileurl,
+                    //window.location = response;
                     alert('Seccussfully Downloaded');
                 },
                 error: function (data) {
@@ -136,11 +138,35 @@ $(document).ready(function ()
             }); 
         }  
     });
+
+    $('.download-all').on('click', function(e){
+        e.preventDefault();
+        var allVals = [];  
+        $(".multiple_download:checked").each(function() {  
+            allVals.push($(this).attr('data-id'));
+        });  
+
+        if(allVals.length <=0)  
+        {  
+            console.log("Please select row to download.");  
+        }
+        else
+        {
+            $('.zip-file').multiDownload();
+        }
+        
+    });
 });
+
 ```
 ### Code
 ```php
-$product_images =  DB::table('product_images')
+public function downloads_all(Request $request) 
+     {
+        $public_dir = '';
+        $$zipFileName = '';
+        $zip = '';
+        $product_images =  DB::table('product_images')
                     ->where('deleted_at', null)
                     ->whereIn('product_id',  explode(',', $request->ids))
                     ->get();
@@ -151,6 +177,10 @@ $product_images =  DB::table('product_images')
                 $zipFileName = 'product_' . $value->product_id . '_images.zip';
                 $zip = new ZipArchive;
                 $public_dir = public_path('uploads/download-images');
+                if (!is_dir($public_dir)) 
+                {
+                    mkdir($public_dir, 0777, true);
+                }
                 if ($zip->open($public_dir . '/' . $zipFileName, ZipArchive::CREATE) === TRUE) 
                 {
                     foreach ($product_images as $image) 
@@ -163,30 +193,52 @@ $product_images =  DB::table('product_images')
                     $zip->close();
                 }
             }
-            $filetopath = $public_dir . '/' . $zipFileName;
-            $headers = array(
-                'Content-Type' => 'application/octet-stream',
-                'Expires' => 0,
-                'Content-Transfer-Encoding' => 'binary',
-                'Content-Length' => filesize($filetopath),
-                'Cache-Control' => 'private, no-transform, no-store, must-revalidate',
-                'Content-Disposition' => 'attachment; filename="' . $zipFileName . '"',
-            );
+            $files = glob(public_path('uploads/download-images'));
+            \Zipper::make(public_path('uploads/product_images.zip'))->add($files)->close();
 
-            if (file_exists($filetopath)) 
+
+            $fileurl =  public_path('uploads/product_images.zip');
+    
+            
+            if (file_exists($fileurl)) 
             {
-                return response()->download($filetopath, $zipFileName, $headers);
+                return 'success';
+                //return response()->download($fileurl);
             }
             else
             {
                 return back();
             }
+            
+           /* $headers = [
+                'Access-Control-Allow-Origin' => '*',
+                'Access-Control-Allow-Methods' => 'POST, GET, OPTIONS, PUT, PATCH, DELETE',
+                'Access-Control-Allow-Headers' => 'Access-Control-Allow-Headers, Origin,Accept, X-Requested-With, Content-Type, Access-Control-Request-Method, Authorization , Access-Control-Request-Headers',
+                'Content-Type' => 'application/zip'
+                ];
+            return response()->download(public_path('uploads/'), 'product_images.zip', $headers);*/
         }
         else
         {
             return back();
         }
+    }
 ```
+### views
+```html
+<div class="col-md-2">
+  <input type="button" id="download-button" value="Download" class="btn sbold green float-right download-all" data-url="{{url('admin/product/download-all')}}" style="margin-left: 12px !important;">
+</div>
+<a class="zip-file" href="{{ url('public/uploads/product_images.zip') }}"></a>
+
+<td>
+  <label class="mt-checkbox mt-checkbox-single mt-checkbox-outline">
+    <input type="checkbox" class="checkboxes bulk-checkbox multiple_download" value=" {{$product->id}}" name="product_ids[]" data-id="    {{$product->id}}"/>
+<span></span>
+  </label>
+</td>
+
+````
 ### Read file from folder in laravl
 ```php
 $files = File::files(public_path('uploads/download-images'));
