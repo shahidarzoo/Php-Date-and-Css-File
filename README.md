@@ -87,6 +87,11 @@
       }
   }
 ```
+### Zoom Image
+click here to read zoom image 
+
+(http://mark-rolich.github.io/Magnifier.js/)[http://mark-rolich.github.io/Magnifier.js/]
+
 ## Multiple images download and delete in Laravel/Codeigniter
 ```js
 $(document).ready(function () 
