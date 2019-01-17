@@ -287,3 +287,31 @@ if ($files !== false)
    }
 }
 ```
+### Multiple rows update and insert in laravel
+ ```php
+ function update_financial_report(Request $request)
+    {
+        $order_item_id = $request->order_item_id;
+        $financial_notes = $request->financial_notes;
+        $financial_comments = $request->financial_comments;
+        $transfer_amount = $request->transfer_amount;
+        $transfer_date = $request->transfer_date;
+
+        foreach($order_item_id as $k => $id){
+          $values = array(
+                'financial_notes'=> $financial_notes[$k],
+                'financial_comments'=> $financial_comments[$k],
+                'transfer_amount'=> $transfer_amount[$k],
+                'transfer_date'=> $transfer_date[$k]
+            );
+          OrderToStore::where('id',$id)->update($values);
+
+        }
+        return redirect()->back();
+    }
+ ````
+### Html 
+```html
+<input type="hidden" value="<?php echo $order->order_item_id; ?>" name="order_item_id[]">
+ <input type="text" name="transfer_amount[]" value="<?php echo $net_transfer_store; ?>">
+```
