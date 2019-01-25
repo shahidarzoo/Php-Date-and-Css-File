@@ -236,31 +236,31 @@ function curl_data_array($product)
 {
     $product_url = "http://boksha.com/product/$product->slug";
     return  $data_array = '
-            {
-                "id": "'.$product->id.'", 
-                "title": "'.$product->name.'", 
-                "handle": "'.$product->slug.'", 
-                "url": "'.$product_url.'", 
-                "description": "'.$product->description.'", 
-                "type": "'.$product->slug.'",
-                "vendor": "'.$product->title.'", 
-                "image_url": "'.$product->image_path.'", 
-                "variants": [
-                    { 
-                        "id": "'.$product->id.'",
-                        "title": "'.$product->name.'",
-                        "url": "'.$product_url.'",
-                        "sku": "",
-                        "price": "'.$product->price.'",
-                        "inventory_quantity": 0,
-                        "image_url": "'.$product->image_path.'",
-                        "backorders": "0",
-                        "visibility": "visible",
-                        "created_at": "'.$product->created_at.'",
-                        "updated_at": "'.$product->updated_at.'"
-                    }
-                ]
-            }';
+    {
+            "id": "'.$product->id.'", 
+            "title": "'.$product->name.'", 
+            "handle": "'.$product->slug.'", 
+            "url": "'.$product_url.'", 
+            "description": "'.$product->description.'", 
+            "type": "'.$product->slug.'",
+            "vendor": "'.$product->title.'", 
+            "image_url": "'.$product->image_path.'", 
+            "variants": [
+                { 
+                    "id": "'.$product->id.'",
+                    "title": "'.$product->name.'",
+                    "url": "'.$product_url.'",
+                    "sku": "",
+                    "price": "'.$product->price.'",
+                    "inventory_quantity": 0,
+                    "image_url": "'.$product->image_path.'",
+                    "backorders": "0",
+                    "visibility": "visible",
+                    "created_at": "'.$product->created_at.'",
+                    "updated_at": "'.$product->updated_at.'"
+                }
+            ]
+     }';
 }
 
 function curl_product_query($id)
