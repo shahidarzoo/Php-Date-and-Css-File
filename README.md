@@ -1,4 +1,4 @@
-# PHP/laravel Date and Zip Create and Download
+# PHP/laravel Date and Zip Create and Download and PHP CURL
 ```php
   $time_ago = strtotime($notify->created_at);
   $cur_time   = time();
@@ -86,6 +86,202 @@
           echo "$years years ago";
       }
   }
+```
+## PHP CURL 
+use this code in helper in your project
+```php
+function callMailchimpAPI($method, $url, $data=null)
+{
+    $curl = curl_init();
+    /*$info = curl_getinfo($curl);
+    echo "<pre>";
+    print_r( $info );*/
+    switch ($method)
+    {
+        case "POST":
+            curl_setopt($curl, CURLOPT_POST, 1);
+            curl_setopt($curl, CURLOPT_POSTFIELDS, $data);
+         break;
+        case "PATCH":
+            curl_setopt($curl, CURLOPT_CUSTOMREQUEST, "PATCH");
+        if ($data)
+            curl_setopt($curl, CURLOPT_POSTFIELDS, $data);                              
+        break;
+        case "DELETE":
+            curl_setopt($curl, CURLOPT_CUSTOMREQUEST, "DELETE"); 
+            curl_setopt($curl, CURLOPT_POSTFIELDS, $data);
+        default:
+        if($data)
+            $url = sprintf("%s?%s", $url, http_build_query($data));
+   }
+    
+    $headers = array(  
+        "--user: 93353d176c81e3391109a76455f50045-us7",
+        "Authorization: Basic b3dhaXNfdGFhcnVmZjo5MzM1M2QxNzZjODFlMzM5MTEwOWE3NjQ1NWY1MDA0NS11czc=",
+        "Content-Type: application/json",
+        "Postman-Token: 163f7134-68ca-45bb-9420-ebf2bef7f447",
+        "cache-control: no-cache"
+     );
+    curl_setopt_array($curl, 
+    [
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_SSL_VERIFYPEER => false,
+        CURLOPT_SSL_VERIFYHOST => false,
+        CURLOPT_HTTPHEADER => $headers, 
+        CURLOPT_HEADER => false,
+        CURLOPT_URL => $url.'?apikey=93353d176c81e3391109a76455f50045-us7'
+    ]);
+
+    $response = curl_exec($curl);
+    curl_close($curl);
+    return $response;
+}
+
+function createMailChimpStore($id)
+{
+    $curl = curl_init();
+    $store_name = "store_";
+    curl_setopt_array($curl, array(
+    CURLOPT_URL => "https://us7.api.mailchimp.com/3.0//ecommerce/stores/",
+    CURLOPT_RETURNTRANSFER => true,
+    CURLOPT_ENCODING => "",
+    CURLOPT_MAXREDIRS => 10,
+    CURLOPT_TIMEOUT => 30,
+    CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+    CURLOPT_CUSTOMREQUEST => "POST",
+    CURLOPT_POSTFIELDS => '{
+      "id" : "'.$store_name.$id.'",
+      "list_id" : "317fbacff8",
+      "name" : "'.$store_name.$id.'",
+      "domain" : "http://boksha.eshmar.com/storew/inspiration",
+      "email_address" : "inspiratiossn@boksha.com",
+      "currency_code" : "AED"
+    }',
+     CURLOPT_HTTPHEADER => array(
+        "--user: 93353d176c81e3391109a76455f50045-us7",
+        "Authorization: Basic b3dhaXNfdGFhcnVmZjo5MzM1M2QxNzZjODFlMzM5MTEwOWE3NjQ1NWY1MDA0NS11czc=",
+        "Content-Type: application/json",
+        "Postman-Token: 8621048d-e026-4135-b456-400b3f3ec523",
+        "cache-control: no-cache"
+      ),
+    ));
+
+    $response = curl_exec($curl);
+    $err = curl_error($curl);
+
+    curl_close($curl);
+}
+
+/* Store Product */
+function curlMailchimpStore($data_array, $product)
+{
+    $url = "https://us7.api.mailchimp.com/3.0/ecommerce/stores";
+    $data = callMailchimpAPI('GET', $url, false);
+    $result = json_decode($data);
+
+    $store_ids = array();
+    foreach ($result->stores as $store) 
+    {
+         $store_ids[] =  $store->id;            
+    }
+    /* Distinct Srore */
+    if (in_array("store_".$product->title, $store_ids))
+    {
+        $url = "https://us7.api.mailchimp.com/3.0/ecommerce/stores/store_$product->title/products";
+        $data = callMailchimpAPI('POST', $url, $data_array);
+    }
+    else
+    {
+        createMailChimpStore($product->title);
+        $url = "https://us7.api.mailchimp.com/3.0/ecommerce/stores/store_$product->title/products";
+        $data = callMailchimpAPI('POST', $url, $data_array);
+    }
+    /* Common store */
+    if (in_array("store_all_products", $store_ids))
+    {
+        $url = "https://us7.api.mailchimp.com/3.0/ecommerce/stores/store_all_products/products";
+        $data = callMailchimpAPI('POST', $url, $data_array);
+    }
+    else
+    {
+        $id = 'all_products';
+        createMailChimpStore($id);
+        $url = "https://us7.api.mailchimp.com/3.0/ecommerce/stores/store_all_products/products";
+        $data = callMailchimpAPI('POST', $url, $data_array);
+    }
+}
+
+/* Update Product */
+function curlMailchimpUpdate($data_array, $product)
+{
+
+    $url = "https://us7.api.mailchimp.com/3.0/ecommerce/stores/store_$product->title/products/$product->id";
+    $data = callMailchimpAPI('PATCH', $url, $data_array);
+
+    $url = "https://us7.api.mailchimp.com/3.0/ecommerce/stores/store_all_products/products/$product->id";
+    $data = callMailchimpAPI('PATCH', $url, $data_array);
+}
+    /*Delete Product */
+function curlMailchimpDelete($id)
+{
+    $delete_id = curl_product_query($id);
+    $url = "https://us7.api.mailchimp.com/3.0/ecommerce/stores/store_$delete_id->title/products/$id";
+    $data = callMailchimpAPI('DELETE', $url, false);
+
+    $url = "https://us7.api.mailchimp.com/3.0/ecommerce/stores/store_all_products/products/$id";
+    $data = callMailchimpAPI('DELETE', $url, false);
+}
+
+function curl_data_array($product)
+{
+    $product_url = "http://boksha.com/product/$product->slug";
+    return  $data_array = '
+            {
+                "id": "'.$product->id.'", 
+                "title": "'.$product->name.'", 
+                "handle": "'.$product->slug.'", 
+                "url": "'.$product_url.'", 
+                "description": "'.$product->description.'", 
+                "type": "'.$product->slug.'",
+                "vendor": "'.$product->title.'", 
+                "image_url": "'.$product->image_path.'", 
+                "variants": [
+                    { 
+                        "id": "'.$product->id.'",
+                        "title": "'.$product->name.'",
+                        "url": "'.$product_url.'",
+                        "sku": "",
+                        "price": "'.$product->price.'",
+                        "inventory_quantity": 0,
+                        "image_url": "'.$product->image_path.'",
+                        "backorders": "0",
+                        "visibility": "visible",
+                        "created_at": "'.$product->created_at.'",
+                        "updated_at": "'.$product->updated_at.'"
+                    }
+                ]
+            }';
+}
+
+function curl_product_query($id)
+{
+    return $product = DB::table('products')
+        ->join('stores', 'stores.id', '=', 'products.store_id')
+        ->leftJoin('product_images', 'products.id', 'product_images.product_id')
+        ->select('products.*', 'stores.title','product_images.image_path')
+        ->whereNull('products.deleted_at')
+        ->groupBy("products.id")
+        ->where('products.id',  $id)
+        ->first();
+}
+
+```
+### use this in method
+```php
+$last_inserted_id = $product->id;
+$product = curl_product_query($last_inserted_id);
+$data_array = curl_data_array($product);
+curlMailchimpStore($data_array, $product);
 ```
 ### Zoom Image
 click here to read zoom image 
