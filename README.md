@@ -278,10 +278,12 @@ function curl_product_query($id)
 ```
 ### use this in method
 ```php
-$last_inserted_id = $product->id;
-$product = curl_product_query($last_inserted_id);
-$data_array = curl_data_array($product);
-curlMailchimpStore($data_array, $product);
+public function store(ProductsRequest $request) {
+    $last_inserted_id = $product->id;
+    $product = curl_product_query($last_inserted_id);
+    $data_array = curl_data_array($product);
+    curlMailchimpStore($data_array, $product);
+}
 ```
 ### Zoom Image
 click here to read zoom image 
