@@ -87,6 +87,45 @@
       }
   }
 ```
+
+## Last day of the month
+```php
+public function get_date()
+    {
+    	//Get Last Day Of The Current Month:
+    	$lastDay = date('t',strtotime('today'));
+    	print_r($lastDay);
+
+    	//Get Last Day Of The Current Month 2:
+    	$lastDateOfThisMonth =strtotime('last day of this month') ;
+    	$lastDay = date('d/m/Y', $lastDateOfThisMonth);
+    	print_r($lastDay);
+
+    	//Get Last Day Of The Next Month:
+    	$lastDay = date('t',strtotime('next month'));
+    	print_r($lastDay);
+
+    	//Get Last Day Of The Next Month 2:
+    	$lastDateOfNextMonth =strtotime('last day of next month') ;
+    	$lastDay = date('d/m/Y', $lastDateOfNextMonth);
+    	print_r($lastDay);
+
+    	//Get Last Day Of The Previous Month:	
+    	$lastDay = date('t',strtotime('last month'));
+    	print_r($lastDay);
+
+
+    	//Get Last Day Of The Previous Month 2:
+    	$lastDateOfLastMonth =strtotime('last day of last month') ;
+    	$lastDay = date('d/m/Y', $lastDateOfLastMonth);
+    	print_r($lastDay);
+
+    	//Get Last Day Of The Specific Month:
+    	$lastDay = date('t',strtotime('1/1/2018'));
+    	print_r($lastDay);
+    }
+
+```
 ## PHP CURL 
 use this code in helper in your project
 ```php
