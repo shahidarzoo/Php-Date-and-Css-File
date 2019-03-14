@@ -1,4 +1,10 @@
 # PHP/laravel Date and Zip Create and Download and PHP CURL
+
+### Show date in laravel bladed
+```php
+
+{{date('l jS F Y ', strtotime($user->created_at))}}
+```
 ```php
   $time_ago = strtotime($notify->created_at);
   $cur_time   = time();
