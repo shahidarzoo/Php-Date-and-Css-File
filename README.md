@@ -558,3 +558,39 @@ if ($files !== false)
 <input type="hidden" value="<?php echo $order->order_item_id; ?>" name="order_item_id[]">
  <input type="text" name="transfer_amount[]" value="<?php echo $net_transfer_store; ?>">
 ```
+
+# Multiple Image upload
+```php
+public function vehicle_verification(Request $request)
+    {
+
+        $files=[];
+        $destinationPath = public_path('/uploads/vehicle_verification');
+        if (!is_dir($destinationPath)) 
+        {
+            mkdir($destinationPath, 0777, true);
+        }
+        foreach ($request->file('dv_vehicle_img') as $image) 
+        {
+            if (!empty($image)) 
+            {
+                $fileName = $image->getClientOriginalName();
+                $image->move($destinationPath,$fileName);
+                //dd($request->all());
+                $files[] = '/uploads/vehicle_verification/'.$fileName;
+            }
+
+        }
+
+        
+        DB::table('tms_vehicle_detail')
+            ->where('dv_vehicle_id', $request->dv_vehicle_id)
+            ->update([
+                'dv_vehicle_img' =>  implode(',',$files),
+                'remarks' =>  $request->remarks,
+                'is_verify' =>  $request->is_verify,
+            ]);
+        return redirect()->back();
+    }
+
+```
